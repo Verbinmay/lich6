@@ -40,15 +40,27 @@ export const blogsRepository = {
     };
     return { paginatorEndInfo: paginatorEndInfo, result: result };
   },
-async findBlogById(id:string){
-  const result = blogsCollections.findOne({_id: new ObjectId(id)})
-  return result
-},
+  async findBlogById(id: string) {
+    const result = blogsCollections.findOne({ _id: new ObjectId(id) });
+    return result;
+  },
   //POST
-  async createBlog(createdBlog: any){
-    const result = await blogsCollections.insertOne(createdBlog)
-    return await blogsCollections.findOne({_id:result.insertedId})
-  }
-
+  async createBlog(createdBlog: any) {
+    const result = await blogsCollections.insertOne(createdBlog);
+    return await blogsCollections.findOne({ _id: result.insertedId });
+  },
+  //UPDATE
+  async updateBlog(
+    id: string,
+    name: string,
+    description: string,
+    websiteUrl: string
+  ) {
+    const result = await blogsCollections.updateOne(
+      { _id: new ObjectId(id) },
+      { $set: { name: name, description: description, websiteUrl: websiteUrl } }
+    );
+    return result.matchedCount === 1
+  },
 };
 //P U D

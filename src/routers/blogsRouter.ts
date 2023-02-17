@@ -73,7 +73,7 @@ blogsRouter.post(
       req.body.websiteUrl
     );
 
-    const viewBlogPost:BlogViewModel = {
+    const viewBlogPost: BlogViewModel = {
       id: blogPost!._id.toString(),
       name: blogPost!.name,
       description: blogPost!.description,
@@ -86,4 +86,20 @@ blogsRouter.post(
 );
 
 //PUT
-blogsRouter.put("/", async (req: Request, res: Response) => {});
+blogsRouter.put(
+  "/:id",
+  basicValidationMiddleware,
+  nameValidation,
+  descriptionValidation,
+  websiteUrlValidation,
+  inputValidationMiddleware,
+  async (req: Request, res: Response) => {
+    const blogPut = await blogsService.updateBlog(
+      req.params.id,
+      req.body.name,
+      req.body.description,
+      req.body.websiteUrl
+    );
+    blogPut ? res.send(204) : res.send(404);
+  }
+);

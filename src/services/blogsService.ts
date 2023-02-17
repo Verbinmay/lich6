@@ -15,4 +15,19 @@ export const blogsService = {
     const result = await blogsRepository.createBlog(createdBlog);
     return result;
   },
+  //UPDATE
+  async updateBlog(
+    id: string,
+    name: string,
+    description: string,
+    websiteUrl: string
+  ) {
+    const result = await blogsRepository.updateBlog(
+      id,
+      name,
+      description,
+      websiteUrl
+    );
+    return result;
+  },
 };
