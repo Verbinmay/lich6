@@ -60,7 +60,13 @@ export const blogsRepository = {
       { _id: new ObjectId(id) },
       { $set: { name: name, description: description, websiteUrl: websiteUrl } }
     );
-    return result.matchedCount === 1
+    return result.matchedCount === 1;
+  },
+
+  //DELETE
+  async deleteBlog(id: string) {
+    const result = await blogsCollections.deleteOne({ _id: new ObjectId(id) });
+    return result.deletedCount === 1;
   },
 };
 //P U D

@@ -30,4 +30,10 @@ export const blogsService = {
     );
     return result;
   },
+
+  //DELETE
+  async deleteBlog(id: string) {
+    const result = await blogsRepository.deleteBlog(id);
+    return result;
+  },
 };

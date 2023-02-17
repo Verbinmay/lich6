@@ -103,3 +103,13 @@ blogsRouter.put(
     blogPut ? res.send(204) : res.send(404);
   }
 );
+
+//DELETE
+blogsRouter.delete(
+  "/:id",
+  basicValidationMiddleware,
+  async (req: Request, res: Response) => {
+    const blogDelete = await blogsService.deleteBlog(req.params.id);
+    blogDelete ? res.send(204) : res.send(404);
+  }
+);
