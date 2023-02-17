@@ -1,3 +1,4 @@
+import { ObjectId } from "mongodb";
 import { countTotalAndPages } from "../paginator";
 import { PaginatorEnd, PaginatorStart } from "../types/paginatorType";
 import { blogsCollections } from "./db";
@@ -39,5 +40,15 @@ export const blogsRepository = {
     };
     return { paginatorEndInfo: paginatorEndInfo, result: result };
   },
+async findBlogById(id:string){
+  const result = blogsCollections.findOne({_id: new ObjectId(id)})
+  return result
+},
+  //POST
+  async createBlog(createdBlog: any){
+    const result = await blogsCollections.insertOne(createdBlog)
+    return await blogsCollections.findOne({_id:result.insertedId})
+  }
+
 };
 //P U D

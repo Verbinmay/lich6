@@ -1,6 +1,15 @@
 import { Request, Response, Router } from "express";
+import { basicValidationMiddleware } from "../middlewares/basicMiddleware";
+import {
+  descriptionValidation,
+  inputValidationMiddleware,
+  nameValidation,
+  websiteUrlValidation,
+} from "../middlewares/inputValidationMiddleware";
 import { paginator } from "../paginator";
 import { blogsRepository } from "../repositories/blogsRepository";
+import { blogsService } from "../services/blogsService";
+import { BlogViewModel } from "../types/blogsType";
 import { PaginatorEnd, PaginatorBlog } from "../types/paginatorType";
 
 export const blogsRouter = Router({});
@@ -9,6 +18,7 @@ export const blogsRouter = Router({});
 
 blogsRouter.get("/", async (req: Request, res: Response) => {
   const paginatorInformation = paginator(req.query);
+
   const blogsGet = await blogsRepository.findBlogs(paginatorInformation);
 
   const viewBlogsGet: PaginatorBlog = {
@@ -30,4 +40,50 @@ blogsRouter.get("/", async (req: Request, res: Response) => {
   res.status(200).send(viewBlogsGet);
 });
 
+blogsRouter.get("/:id", async (req: Request, res: Response) => {
+  const blogGetByID = await blogsRepository.findBlogById(req.params.id);
 
+  if (blogGetByID) {
+    const viewBlogGetById: BlogViewModel = {
+      id: blogGetByID._id.toString(),
+      name: blogGetByID.name,
+      description: blogGetByID.description,
+      websiteUrl: blogGetByID.websiteUrl,
+      createdAt: blogGetByID.createdAt,
+      isMembership: blogGetByID.isMembership,
+    };
+    res.status(200).send(viewBlogGetById);
+  } else {
+    res.send(404);
+  }
+});
+//POST
+
+blogsRouter.post(
+  "/",
+  basicValidationMiddleware,
+  nameValidation,
+  descriptionValidation,
+  websiteUrlValidation,
+  inputValidationMiddleware,
+  async (req: Request, res: Response) => {
+    const blogPost = await blogsService.createBlog(
+      req.body.name,
+      req.body.description,
+      req.body.websiteUrl
+    );
+
+    const viewBlogPost:BlogViewModel = {
+      id: blogPost!._id.toString(),
+      name: blogPost!.name,
+      description: blogPost!.description,
+      websiteUrl: blogPost!.websiteUrl,
+      createdAt: blogPost!.createdAt,
+      isMembership: blogPost!.isMembership,
+    };
+    res.status(201).send(viewBlogPost);
+  }
+);
+
+//PUT
+blogsRouter.put("/", async (req: Request, res: Response) => {});

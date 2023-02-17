@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from "express";
-export const avtorizationValidationMiddleware = (
+export const basicValidationMiddleware = (
   req: Request,
   res: Response,
   next: NextFunction
