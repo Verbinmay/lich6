@@ -3,26 +3,33 @@ import { CommentViewModel } from "./commentsType";
 import { PostViewModel } from "./postsType";
 import { UserViewModel } from "./userType";
 
+export type PaginatorStart = {
+  searchNameTerm:string
+  sortBy:string
+  sortDirection:string
+  pageNumber:number
+  pageSize:number
+}
 
-export type Paginator = {
+export type PaginatorEnd = {
     pagesCount: number;
     page: number;
     pageSize: number;
     totalCount: number;
   };
   
-  export type PaginatorBlog = Paginator & {
+  export type PaginatorBlog = PaginatorEnd & {
     items: Array<BlogViewModel>;
   };
   
-  export type PaginatorPost = Paginator & {
+  export type PaginatorPost = PaginatorEnd & {
     items: Array<PostViewModel>;
   };
   
-  export type PaginatorUser = Paginator & {
+  export type PaginatorUser = PaginatorEnd & {
     items: Array<UserViewModel>;
   };
 
-  export type PaginatorCommentViewModel = Paginator & {
+  export type PaginatorCommentViewModel = PaginatorEnd & {
     items: Array<CommentViewModel>;
   };

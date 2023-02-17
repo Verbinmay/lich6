@@ -1,3 +1,7 @@
+import {Request, Response, NextFunction } from "express";
+import { body, validationResult } from "express-validator";
+import { blogsRepository } from "../repositories/blogsRepository";
+import { blogsCollections } from "../repositories/db";
 
 //blogs
 export const nameValidation = body("name")
@@ -64,18 +68,20 @@ export const contentValidation = body("content")
   .withMessage("content length must be max 1000");
 
  
-  export async function isBlogIdValidationInPath(
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ) {
-    let result = await blogsRepository.findBlogById(req.params.id);
-    if (result === null) {
-      return res.send(404);
-    } else {
-      return next();
-    }
-  }
+  // export async function isBlogIdValidationInPath(
+  //   req: Request,
+  //   res: Response,
+  //   next: NextFunction
+  // ) {
+  //   let result = await blogsRepository.findBlogById(req.params.id);
+  //   if (result === null) {
+  //     return res.send(404);
+  //   } else {
+  //     return next();
+  //   }
+  // }
+
+  
   //Posts
   export const isBlogIdValidation = body("blogId").custom(async (value) => {
     let result = await blogsCollections.findOne({ id: value });
