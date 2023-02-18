@@ -18,6 +18,7 @@ import {
   PaginatorEnd,
   PaginatorBlog,
   PaginatorPost,
+  PaginatorStart,
 } from "../types/paginatorType";
 import { PostViewModel } from "../types/postsType";
 
@@ -26,7 +27,7 @@ export const blogsRouter = Router({});
 //GET
 
 blogsRouter.get("/", async (req: Request, res: Response) => {
-  const paginatorInformation = paginator(req.query);
+  const paginatorInformation:PaginatorStart = paginator(req.query);
 
   const blogsGet: {
     paginatorEndInfo: PaginatorEnd;
@@ -95,7 +96,7 @@ blogsRouter.post(
       createdAt: blogPost!.createdAt,
       isMembership: blogPost!.isMembership,
     };
-    res.status(201).send(blogPost);
+    res.status(201).send(viewBlogPost);
   }
 );
 
@@ -166,7 +167,7 @@ blogsRouter.post(
 
 //GET-POST-BLOGID
 blogsRouter.get("/:blogId/posts", async (req: Request, res: Response) => {
-  const paginatorInformation = await paginator(req.query);
+  const paginatorInformation:PaginatorStart = await paginator(req.query);
 
   const blogGetById: BlogDBModel | null = await blogsRepository.findBlogById(
     req.params.blogId

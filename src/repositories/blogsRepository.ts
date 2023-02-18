@@ -1,5 +1,5 @@
 import { ObjectId } from "mongodb";
-import { countTotalAndPages } from "../paginator";
+import { countTotalAndPages, createFilterSort } from "../paginator";
 import { BlogDBModel, PostDBModel } from "../types/dbType";
 import { PaginatorEnd, PaginatorStart } from "../types/paginatorType";
 import { blogsCollections, postsCollections } from "./db";
@@ -15,12 +15,12 @@ export const blogsRepository = {
         }
       : {};
 
-    const filterSort: any = {};
-    filterSort[paginatorStartInfo.sortBy as keyof typeof filterSort] =
-      paginatorStartInfo.sortDirection === "desc" ? -1 : 1;
+    const filterSort: any = createFilterSort(
+      paginatorStartInfo.sortBy,
+      paginatorStartInfo.sortDirection
+    );
 
-    //function
-    const pagesCounter = await countTotalAndPages(
+    const pagesCounter: { pagesCount: number; totalCount: number } = await countTotalAndPages(
       blogsCollections,
       filterName,
       paginatorStartInfo.pageSize
@@ -50,14 +50,12 @@ export const blogsRepository = {
   //POST
   async createBlog(createdBlog: any) {
     const result = await blogsCollections.insertOne(createdBlog);
-    const addId = await blogsCollections.updateOne(
+    const addId = await blogsCollections.findOneAndUpdate(
       { _id: result.insertedId },
-      { $set: { id: result.insertedId.toString() } }
+      { $set: { id: result.insertedId.toString() } },
+      {returnDocument: "after"}
     );
-    const resultFind: BlogDBModel | null = await blogsCollections.findOne({
-      _id: result.insertedId,
-    });
-    return resultFind;
+    return addId.value;
   },
   //UPDATE
   async updateBlog(
@@ -92,23 +90,23 @@ export const blogsRepository = {
     return resultFind;
   },
 
-//GET-POST-BLOGID
-  async findPostsByBlogId(paginatorStartInfo:PaginatorStart,
-    id:string){
-      const filter: any = {blogId:id}
+  //GET-POST-BLOGID
+  async findPostsByBlogId(paginatorStartInfo: PaginatorStart, id: string) {
+    const filter: any = { blogId: id };
 
     const filterSort: any = {};
     filterSort[paginatorStartInfo.sortBy as keyof typeof filterSort] =
       paginatorStartInfo.sortDirection === "desc" ? -1 : 1;
 
     //function
-    const pagesCounter = await countTotalAndPages(
-      postsCollections,
-      filter,
-      paginatorStartInfo.pageSize
-    );
+    const pagesCounter: { pagesCount: number; totalCount: number } =
+      await countTotalAndPages(
+        postsCollections,
+        filter,
+        paginatorStartInfo.pageSize
+      );
 
-    let result: Array<PostDBModel> = await postsCollections
+    const result: Array<PostDBModel> = await postsCollections
       .find(filter)
       .sort(filterSort)
       .skip((paginatorStartInfo.pageNumber - 1) * paginatorStartInfo.pageSize)
@@ -122,9 +120,5 @@ export const blogsRepository = {
       totalCount: pagesCounter.totalCount,
     };
     return { paginatorEndInfo: paginatorEndInfo, result: result };
-      
-
-    }
+  },
 };
-
-

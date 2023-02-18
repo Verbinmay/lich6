@@ -2,6 +2,7 @@ import express from 'express'
 import bodyParser from "body-parser";
 import { runDb } from './repositories/db';
 import { blogsRouter } from './routers/blogsRouter';
+import { postsRouter } from './routers/postsRouter';
 const app = express()
 const port = process.env.PORT || 3001
 ;
@@ -11,8 +12,8 @@ app.use (jsonBodyMiddleware)
 
 //прописываем наши роуты
 app.use('/blogs', blogsRouter) 
+app.use('/posts', postsRouter) 
 // app.use('/auth', authRouter) 
-// app.use('/posts', postsRouter) 
 // app.use('/testing', testingRouter)
 // app.use('/users', usersRouter)
 // app.use('/comments', commentsRouter)
