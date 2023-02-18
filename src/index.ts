@@ -5,6 +5,8 @@ import { blogsRouter } from './routers/blogsRouter';
 import { postsRouter } from './routers/postsRouter';
 import { authRouter } from './routers/authRouter';
 import { usersRouter } from './routers/usersRouter';
+import { commentsRouter } from './routers/commentsRouter';
+import { testingRouter } from './routers/testingRouter';
 const app = express()
 const port = process.env.PORT || 3001
 ;
@@ -16,9 +18,9 @@ app.use (jsonBodyMiddleware)
 app.use('/blogs', blogsRouter) 
 app.use('/posts', postsRouter) 
 app.use('/auth', authRouter) 
-// app.use('/testing', testingRouter)
+app.use('/testing', testingRouter)
 app.use('/users', usersRouter)
-// app.use('/comments', commentsRouter)
+app.use('/comments', commentsRouter)
 
 
 
