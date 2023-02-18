@@ -132,7 +132,9 @@ postsRouter.put(
 );
 
 //DELETE
-postsRouter.delete("/:id", async (req: Request, res: Response) => {
+postsRouter.delete("/:id", 
+basicValidationMiddleware,
+async (req: Request, res: Response) => {
   const postGetById: PostDBModel | null = await postsRepository.findPostById(
     req.params.id
   );
