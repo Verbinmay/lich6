@@ -1,7 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import { body, validationResult } from "express-validator";
 import { blogsRepository } from "../repositories/blogsRepository";
-import { blogsCollections } from "../repositories/db";
 import { BlogDBModel } from "../types/dbType";
 
 //Blogs
@@ -71,7 +70,7 @@ export const contentValidation = body("content")
 
 //POST-BLOGVALID
 export const isBlogIdValidation = body("blogId").custom(async (value,{req}) => {
-  let result:BlogDBModel|null = await blogsCollections.findOne({ id: value });
+  let result:BlogDBModel|null = await blogsRepository.findBlogById(value)
   if (result) {
     req.blog = result;
   }
@@ -89,7 +88,7 @@ export const contentCommentCreateValidation = body("content")
   .isLength({ min: 20, max: 300 })
   .withMessage("content length must be min 20, max 300");
 
-
+// AUTH 
 export const loginOrEmailValidation = body("loginOrEmail")
   .isString()
   .withMessage("loginOrEmail isnt string")
@@ -105,6 +104,8 @@ export const passwordValidation = body("password")
   .trim()
   .notEmpty()
   .withMessage("password is empty");
+
+  // USER 
 
 export const loginCreateValidation = body("login")
   .isString()
