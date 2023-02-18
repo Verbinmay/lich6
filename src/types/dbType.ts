@@ -1,4 +1,5 @@
 import { ObjectId } from "mongodb";
+import { CommentatorInfo } from "./commentsType";
 import { UserViewModel } from "./userType";
 
 export type BlogDBModel = {
@@ -21,6 +22,14 @@ export type PostDBModel = {
   createdAt: string;
   id: string;
 };
+
+export type CommentDBModel = {
+  _id: ObjectId;
+  content: string;
+  commentatorInfo: CommentatorInfo;
+  createdAt: string;
+  id: string;
+}
 
 export type UserDBModel = UserViewModel & {
   _id: any;

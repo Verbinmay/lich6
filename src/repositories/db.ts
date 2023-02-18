@@ -1,6 +1,6 @@
 import { MongoClient } from "mongodb";
 import * as dotenv from 'dotenv'
-import { BlogDBModel, PostDBModel } from "../types/dbType";
+import { BlogDBModel, CommentDBModel, PostDBModel } from "../types/dbType";
 
 dotenv.config()
 
@@ -19,7 +19,7 @@ export const blogsCollections = db
   export const usersCollections = db
   .collection("Users");
   export const commentsCollections = db
-  .collection("Comments");
+  .collection<CommentDBModel>("Comments");
 
 
 

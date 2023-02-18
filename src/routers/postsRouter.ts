@@ -1,7 +1,9 @@
 import { Request, Response, Router } from "express";
 import { serialize } from "v8";
+import { authMiddleware } from "../middlewares/authMiddleware";
 import { basicValidationMiddleware } from "../middlewares/basicMiddleware";
 import {
+  contentCommentCreateValidation,
   contentValidation,
   inputValidationMiddleware,
   isBlogIdValidation,
@@ -11,8 +13,13 @@ import {
 import { paginator } from "../paginator";
 import { postsRepository } from "../repositories/postsRepository";
 import { postsService } from "../services/postsService";
-import { PostDBModel } from "../types/dbType";
-import { PaginatorEnd, PaginatorPost } from "../types/paginatorType";
+import { CommentDBModel, PostDBModel } from "../types/dbType";
+import {
+  PaginatorCommentViewModel,
+  PaginatorEnd,
+  PaginatorPost,
+  PaginatorStart,
+} from "../types/paginatorType";
 import { PostViewModel } from "../types/postsType";
 import { blogsRouter } from "./blogsRouter";
 
@@ -132,20 +139,95 @@ postsRouter.put(
 );
 
 //DELETE
-postsRouter.delete("/:id", 
-basicValidationMiddleware,
-async (req: Request, res: Response) => {
+postsRouter.delete(
+  "/:id",
+  basicValidationMiddleware,
+  async (req: Request, res: Response) => {
+    const postGetById: PostDBModel | null = await postsRepository.findPostById(
+      req.params.id
+    );
+
+    if (postGetById) {
+      const postDelete: boolean = await postsService.deletePost(req.params.id);
+
+      if (postDelete) {
+        res.send(204);
+        return;
+      }
+    } else {
+      res.send(404);
+    }
+  }
+);
+
+//POSTCOMMENTSBYPOSTID
+
+postsRouter.post(
+  "/:postId/comments",
+  authMiddleware,
+  contentCommentCreateValidation,
+  inputValidationMiddleware,
+  async (req: Request, res: Response) => {
+    const postGetById: PostDBModel | null = await postsRepository.findPostById(
+      req.params.id
+    );
+
+    if (postGetById) {
+      const commentPostPostId = await postsService.createCommentsByPostId(
+        req.body.content,
+        req.user
+      );
+
+      const viewCommentPostPostId = {
+        id: commentPostPostId!.id,
+        content: commentPostPostId!.content,
+        commentatorInfo: {
+          userId: commentPostPostId!.commentatorInfo.userId,
+          userLogin: commentPostPostId!.commentatorInfo.userLogin,
+        },
+        createdAt: commentPostPostId!.createdAt,
+      };
+      res.status(201).send(viewCommentPostPostId);
+    } else {
+      res.send(404);
+    }
+  }
+);
+
+//GETCOMMENTSBYPOSTID
+postsRouter.get("/:postId/comments", async (req: Request, res: Response) => {
   const postGetById: PostDBModel | null = await postsRepository.findPostById(
     req.params.id
   );
 
   if (postGetById) {
-    const postDelete:boolean = await postsService.deletePost(req.params.id);
+    const paginatorInformation: PaginatorStart = paginator(req.query);
+    const commentsGetPostId: {
+      paginatorEndInfo: PaginatorEnd;
+      result: Array<CommentDBModel>;
+    } = await postsRepository.getCommentsByPostId(
+      paginatorInformation,
+      postGetById.id
+    );
 
-    if (postDelete) {
-      res.send(204);
-      return;
-    }
+    const viewcommentsGetPostId: PaginatorCommentViewModel = {
+      pagesCount: commentsGetPostId.paginatorEndInfo.pagesCount,
+      page: commentsGetPostId.paginatorEndInfo.page,
+      pageSize: commentsGetPostId.paginatorEndInfo.pageSize,
+      totalCount: commentsGetPostId.paginatorEndInfo.totalCount,
+      items: commentsGetPostId.result.map((m) => {
+        return {
+          id: m.id,
+          content: m.content,
+          commentatorInfo: {
+            userId: m.commentatorInfo.userId,
+            userLogin: m.commentatorInfo.userLogin,
+          },
+          createdAt: m.createdAt,
+        };
+      }),
+    };
+    res.status(200).send(viewcommentsGetPostId);
   } else {
     res.send(404);
   }

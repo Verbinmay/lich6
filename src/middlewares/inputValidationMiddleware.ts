@@ -81,21 +81,14 @@ export const isBlogIdValidation = body("blogId").custom(async (value,{req}) => {
   return true;
 });
 
+// Comments
+export const contentCommentCreateValidation = body("content")
+  .isString()
+  .withMessage("Isnt string")
+  .bail()
+  .isLength({ min: 20, max: 300 })
+  .withMessage("content length must be min 20, max 300");
 
-// export const isBlogIdValidation = async (
-//   req: Request,
-//   res: Response,
-//   next: NextFunction
-// ) => {
-//   let result:BlogDBModel|null = await blogsCollections.findOne({ id: req.body.blogId });
-//   if (result) {
-//     req.blog = result;
-//     next();
-//   } else {
-//     throw new Error("Please insert existed user id");
-//   }
-//   return true;
-// };
 
 export const loginOrEmailValidation = body("loginOrEmail")
   .isString()
@@ -131,13 +124,7 @@ export const emailCreateValidation = body("email")
   .isEmail()
   .withMessage("Isnt email");
 
-// Comments
-export const contentCommentCreateValidation = body("content")
-  .isString()
-  .withMessage("Isnt string")
-  .bail()
-  .isLength({ min: 20, max: 300 })
-  .withMessage("content length must be min 20, max 300");
+
 
 // Validation
 export const inputValidationMiddleware = (
@@ -175,12 +162,17 @@ export const inputValidationMiddleware = (
 //   }
 // }
 
-// export const isBlogIdValidation2 = body("blogId").custom(async (value) => {
-//   let result = await blogsCollections.findOne({ id: value });
+// export const isBlogIdValidation = async (
+//   req: Request,
+//   res: Response,
+//   next: NextFunction
+// ) => {
+//   let result:BlogDBModel|null = await blogsCollections.findOne({ id: req.body.blogId });
 //   if (result) {
-//   }
-//   if (result == null) {
+//     req.blog = result;
+//     next();
+//   } else {
 //     throw new Error("Please insert existed user id");
-//     return true;
 //   }
-// });
+//   return true;
+// };
