@@ -1,16 +1,25 @@
 import { Request, Response, Router } from "express";
 import { basicValidationMiddleware } from "../middlewares/basicMiddleware";
 import {
+  contentValidation,
   descriptionValidation,
   inputValidationMiddleware,
   nameValidation,
+  shortDescriptionValidation,
+  titleValidation,
   websiteUrlValidation,
 } from "../middlewares/inputValidationMiddleware";
 import { paginator } from "../paginator";
 import { blogsRepository } from "../repositories/blogsRepository";
 import { blogsService } from "../services/blogsService";
 import { BlogViewModel } from "../types/blogsType";
-import { PaginatorEnd, PaginatorBlog } from "../types/paginatorType";
+import { BlogDBModel, PostDBModel } from "../types/dbType";
+import {
+  PaginatorEnd,
+  PaginatorBlog,
+  PaginatorPost,
+} from "../types/paginatorType";
+import { PostViewModel } from "../types/postsType";
 
 export const blogsRouter = Router({});
 
@@ -19,7 +28,10 @@ export const blogsRouter = Router({});
 blogsRouter.get("/", async (req: Request, res: Response) => {
   const paginatorInformation = paginator(req.query);
 
-  const blogsGet = await blogsRepository.findBlogs(paginatorInformation);
+  const blogsGet: {
+    paginatorEndInfo: PaginatorEnd;
+    result: Array<BlogDBModel>;
+  } = await blogsRepository.findBlogs(paginatorInformation);
 
   const viewBlogsGet: PaginatorBlog = {
     pagesCount: blogsGet.paginatorEndInfo.pagesCount,
@@ -41,11 +53,13 @@ blogsRouter.get("/", async (req: Request, res: Response) => {
 });
 
 blogsRouter.get("/:id", async (req: Request, res: Response) => {
-  const blogGetByID = await blogsRepository.findBlogById(req.params.id);
+  const blogGetByID: BlogDBModel | null = await blogsRepository.findBlogById(
+    req.params.id
+  );
 
   if (blogGetByID) {
     const viewBlogGetById: BlogViewModel = {
-      id: blogGetByID._id.toString(),
+      id: blogGetByID.id,
       name: blogGetByID.name,
       description: blogGetByID.description,
       websiteUrl: blogGetByID.websiteUrl,
@@ -67,21 +81,21 @@ blogsRouter.post(
   websiteUrlValidation,
   inputValidationMiddleware,
   async (req: Request, res: Response) => {
-    const blogPost = await blogsService.createBlog(
+    const blogPost: BlogDBModel | null = await blogsService.createBlog(
       req.body.name,
       req.body.description,
       req.body.websiteUrl
     );
 
     const viewBlogPost: BlogViewModel = {
-      id: blogPost!._id.toString(),
+      id: blogPost!.id,
       name: blogPost!.name,
       description: blogPost!.description,
       websiteUrl: blogPost!.websiteUrl,
       createdAt: blogPost!.createdAt,
       isMembership: blogPost!.isMembership,
     };
-    res.status(201).send(viewBlogPost);
+    res.status(201).send(blogPost);
   }
 );
 
@@ -94,7 +108,7 @@ blogsRouter.put(
   websiteUrlValidation,
   inputValidationMiddleware,
   async (req: Request, res: Response) => {
-    const blogPut = await blogsService.updateBlog(
+    const blogPut: boolean = await blogsService.updateBlog(
       req.params.id,
       req.body.name,
       req.body.description,
@@ -109,7 +123,83 @@ blogsRouter.delete(
   "/:id",
   basicValidationMiddleware,
   async (req: Request, res: Response) => {
-    const blogDelete = await blogsService.deleteBlog(req.params.id);
+    const blogDelete: boolean = await blogsService.deleteBlog(req.params.id);
     blogDelete ? res.send(204) : res.send(404);
   }
 );
+
+//POST-POST-BLOGID
+blogsRouter.post(
+  "/:blogId/posts",
+  basicValidationMiddleware,
+  titleValidation,
+  shortDescriptionValidation,
+  contentValidation,
+  inputValidationMiddleware,
+  async (req: Request, res: Response) => {
+    const blogGetByID: BlogDBModel | null = await blogsRepository.findBlogById(
+      req.params.blogId
+    );
+    if (blogGetByID) {
+      const postPostBlogId: PostDBModel | null =
+        await blogsService.postPostByBlogId(
+          blogGetByID,
+          req.body.title,
+          req.body.shortDescription,
+          req.body.content
+        );
+      const viewPostPostBlogId: PostViewModel = {
+        id: postPostBlogId!.id,
+        title: postPostBlogId!.title,
+        shortDescription: postPostBlogId!.shortDescription,
+        content: postPostBlogId!.content,
+        blogId: postPostBlogId!.blogId,
+        blogName: postPostBlogId!.blogName,
+        createdAt: postPostBlogId!.createdAt,
+      };
+      res.status(201).send(viewPostPostBlogId);
+    } else {
+      res.send(404);
+    }
+  }
+);
+
+//GET-POST-BLOGID
+blogsRouter.get("/:blogId/posts", async (req: Request, res: Response) => {
+  const paginatorInformation = await paginator(req.query);
+
+  const blogGetById: BlogDBModel | null = await blogsRepository.findBlogById(
+    req.params.blogId
+  );
+
+  if (blogGetById) {
+    const postGetBlogId: {
+      paginatorEndInfo: PaginatorEnd;
+      result: Array<PostDBModel>;
+    } = await blogsRepository.findPostsByBlogId(
+      paginatorInformation,
+      blogGetById.id
+    );
+
+    const viewPostGetBlogId: PaginatorPost = {
+      pagesCount: postGetBlogId.paginatorEndInfo.pagesCount,
+      page: postGetBlogId.paginatorEndInfo.page,
+      pageSize: postGetBlogId.paginatorEndInfo.pageSize,
+      totalCount: postGetBlogId.paginatorEndInfo.totalCount,
+      items: postGetBlogId.result.map((m) => {
+        return {
+          id: m.id,
+          title: m.title,
+          shortDescription: m.shortDescription,
+          content: m.content,
+          blogId: m.blogId,
+          blogName: m.blogName,
+          createdAt: m.createdAt,
+        };
+      }),
+    };
+    res.status(200).send(viewPostGetBlogId);
+  } else {
+    res.send(404);
+  }
+});

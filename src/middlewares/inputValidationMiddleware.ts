@@ -34,7 +34,7 @@ export const websiteUrlValidation = body("websiteUrl")
   .bail()
   .isLength({ max: 100 })
   .withMessage("WebsiteUrl ength must be max 100");
-//
+//POST
 
 export const titleValidation = body("title")
   .isString()
@@ -68,88 +68,89 @@ export const contentValidation = body("content")
   .isLength({ max: 1000 })
   .withMessage("content length must be max 1000");
 
-// export async function isBlogIdValidationInPath(
-//   req: Request,
-//   res: Response,
-//   next: NextFunction
-// ) {
-//   let result = await blogsRepository.findBlogById(req.params.id);
-//   if (result === null) {
-//     return res.send(404);
-//   } else {
-//     return next();
-//   }
-// }
-
-//Posts
-export const isBlogIdValidation = body("blogId").custom(async (value) => {
-  let result = await blogsCollections.findOne({ id: value });
-  if (result) {
-  }
-  if (result == null) {
-    throw new Error("Please insert existed user id");
-  }
-  return true;
-});
-
-export const loginOrEmailValidation = body("loginOrEmail")
+  
+  //Posts
+  export const isBlogIdValidation = body("blogId").custom(async (value) => {
+    let result = await blogsCollections.findOne({ id: value });
+    if (result) {
+    }
+    if (result == null) {
+      throw new Error("Please insert existed user id");
+    }
+    return true;
+  });
+  
+  export const loginOrEmailValidation = body("loginOrEmail")
   .isString()
   .withMessage("loginOrEmail isnt string")
   .bail()
   .trim()
   .notEmpty()
   .withMessage("loginOrEmail is empty");
-//Auth
-export const passwordValidation = body("password")
+  //Auth
+  export const passwordValidation = body("password")
   .isString()
   .withMessage("password isnt string")
   .bail()
   .trim()
   .notEmpty()
   .withMessage("password is empty");
-
-export const loginCreateValidation = body("login")
+  
+  export const loginCreateValidation = body("login")
   .isString()
   .withMessage("Isnt string")
   .bail()
   .isLength({ min: 3, max: 10 })
   .withMessage("login length must be min 3, max 10");
-//
-export const passwordCreateValidation = body("password")
+  //
+  export const passwordCreateValidation = body("password")
   .isString()
   .withMessage("Isnt string")
   .bail()
   .isLength({ min: 6, max: 20 })
   .withMessage("login length must be min 6, max 20");
-
-export const emailCreateValidation = body("email")
+  
+  export const emailCreateValidation = body("email")
   .isEmail()
   .withMessage("Isnt email");
-
-// Comments
-export const contentCommentCreateValidation = body("content")
+  
+  // Comments
+  export const contentCommentCreateValidation = body("content")
   .isString()
   .withMessage("Isnt string")
   .bail()
   .isLength({ min: 20, max: 300 })
   .withMessage("content length must be min 20, max 300");
-
-// Validation
-export const inputValidationMiddleware = (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    let newErorsArray = errors.array().map(function (a) {
-      return {
-        message: a.msg,
-        field: a.param,
-      };
-    });
-    res.status(400).json({ errorsMessages: newErorsArray });
-  } else {
-    next();
-  }
-};
+  
+  // Validation
+  export const inputValidationMiddleware = (
+    req: Request,
+    res: Response,
+    next: NextFunction
+    ) => {
+      const errors = validationResult(req);
+      if (!errors.isEmpty()) {
+        let newErorsArray = errors.array().map(function (a) {
+          return {
+            message: a.msg,
+            field: a.param,
+          };
+        });
+        res.status(400).json({ errorsMessages: newErorsArray });
+      } else {
+        next();
+      }
+    };
+  //////////////////////////////////////
+    // export async function isBlogIdValidationInPath(
+    //   req: Request,
+    //   res: Response,
+    //   next: NextFunction
+    // ) {
+    //   let result = await blogsRepository.findBlogById(req.params.id);
+    //   if (result === null) {
+    //     return res.send(404);
+    //   } else {
+    //     return next();
+    //   }
+    // }

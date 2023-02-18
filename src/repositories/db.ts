@@ -1,5 +1,6 @@
 import { MongoClient } from "mongodb";
 import * as dotenv from 'dotenv'
+import { BlogDBModel, PostDBModel } from "../types/dbType";
 
 dotenv.config()
 
@@ -12,9 +13,9 @@ export const client = new MongoClient(mongoUri);
 const db = client
   .db("Kamasutra");
 export const blogsCollections = db
-  .collection("Blogs");
+  .collection<BlogDBModel>("Blogs");
   export const postsCollections = db
-  .collection("Posts");
+  .collection<PostDBModel>("Posts");
   export const usersCollections = db
   .collection("Users");
   export const commentsCollections = db
