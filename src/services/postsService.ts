@@ -46,7 +46,11 @@ export const postsService = {
   },
 
   //POSTCOMMENTSBYPOSTID
-  async createCommentsByPostId(content: string, user: UserDBModel) {
+  async createCommentsByPostId(
+    content: string,
+    user: UserDBModel,
+    postId: string
+  ) {
     const createdComment = {
       content: content,
       commentatorInfo: {
@@ -54,6 +58,7 @@ export const postsService = {
         userLogin: user.login,
       },
       createdAt: new Date().toISOString(),
+      postId: postId,
     };
     const result = await postsRepository.createCommentsByPostId(createdComment);
     return result;

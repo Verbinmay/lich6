@@ -7,7 +7,8 @@ import {
 } from "../middlewares/inputValidationMiddleware";
 import { usersRepository } from "../repositories/usersRepository";
 import { usersService } from "../services/usersService";
-import { LoginSuccessViewModel } from "../types/authType";
+import { LoginSuccessViewModel, MeViewModel } from "../types/authType";
+import { UserDBModel } from "../types/dbType";
 
 export const authRouter = Router({});
 
@@ -30,8 +31,10 @@ authRouter.post(
 );
 
 authRouter.get("/me", authMiddleware, async (req: Request, res: Response) => {
-  const authGet = await usersRepository.findUserById(req.user.id);
-  const viewAuthGet = {
+  const authGet: UserDBModel | null = await usersRepository.findUserById(
+    req.user.id
+  );
+  const viewAuthGet: MeViewModel = {
     email: authGet!.email,
     login: authGet!.login,
     userId: authGet!.id,

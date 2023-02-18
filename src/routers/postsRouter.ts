@@ -169,13 +169,14 @@ postsRouter.post(
   inputValidationMiddleware,
   async (req: Request, res: Response) => {
     const postGetById: PostDBModel | null = await postsRepository.findPostById(
-      req.params.id
+      req.params.postId
     );
 
     if (postGetById) {
       const commentPostPostId = await postsService.createCommentsByPostId(
         req.body.content,
-        req.user
+        req.user,
+        postGetById.id
       );
 
       const viewCommentPostPostId = {
@@ -197,7 +198,7 @@ postsRouter.post(
 //GETCOMMENTSBYPOSTID
 postsRouter.get("/:postId/comments", async (req: Request, res: Response) => {
   const postGetById: PostDBModel | null = await postsRepository.findPostById(
-    req.params.id
+    req.params.postId
   );
 
   if (postGetById) {
