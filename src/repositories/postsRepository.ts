@@ -56,5 +56,11 @@ export const postsRepository = {
     blogId: string){
         const result = await postsCollections.updateOne({id:id},{$set:{title:title, shortDescription:shortDescription,content:content,blogId:blogId}})
         return result.matchedCount === 1
+    },
+
+    //DELETE
+    async deletePost(id:string){
+        const result = postsCollections.deleteOne({id:id})
+        return (await result).deletedCount ===1
     }
 };

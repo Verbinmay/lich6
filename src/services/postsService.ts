@@ -23,13 +23,25 @@ export const postsService = {
   },
   //PUT
   async updatePost(
-    id:string,
+    id: string,
     title: string,
     shortDescription: string,
     content: string,
     blogId: string
   ) {
-    const result = postsRepository.updatePost( id, title, shortDescription, content, blogId)
-    return result
+    const result:boolean = await postsRepository.updatePost(
+      id,
+      title,
+      shortDescription,
+      content,
+      blogId
+    );
+    return result;
+  },
+
+  //DELETE
+  async deletePost(id: string) {
+    const result: boolean = await postsRepository.deletePost(id);
+    return result;
   },
 };

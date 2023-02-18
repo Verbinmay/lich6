@@ -1,4 +1,5 @@
 import { Request, Response, Router } from "express";
+import { serialize } from "v8";
 import { basicValidationMiddleware } from "../middlewares/basicMiddleware";
 import {
   contentValidation,
@@ -113,7 +114,7 @@ postsRouter.put(
     );
 
     if (postGetById) {
-      const postUpdate:boolean = await postsService.updatePost(
+      const postUpdate: boolean = await postsService.updatePost(
         postGetById.id,
         req.body.title,
         req.body.shortDescription,
@@ -130,3 +131,20 @@ postsRouter.put(
   }
 );
 
+//DELETE
+postsRouter.delete("/:id", async (req: Request, res: Response) => {
+  const postGetById: PostDBModel | null = await postsRepository.findPostById(
+    req.params.id
+  );
+
+  if (postGetById) {
+    const postDelete:boolean = await postsService.deletePost(req.params.id);
+
+    if (postDelete) {
+      res.send(204);
+      return;
+    }
+  } else {
+    res.send(404);
+  }
+});
