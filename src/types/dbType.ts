@@ -31,7 +31,11 @@ export type CommentDBModel = {
   id: string;
 }
 
-export type UserDBModel = UserViewModel & {
-  _id: any;
-  password: string;
+export type UserDBModel =  {
+  _id: ObjectId;
+  login: string;
+  email: string;
+  createdAt: string;
+  hash: string;
+  id: string;
 };
