@@ -5,8 +5,8 @@ export const paginator = (query: any): PaginatorStart=> {
     searchNameTerm: query.searchNameTerm ? query.searchNameTerm : "", //default null
     sortBy: query.sortBy ? query.sortBy : "createdAt",
     sortDirection: query.sortDirection ? query.sortDirection : "desc",
-    pageNumber: query.pageNumber ? query.pageNumber : 1,
-    pageSize: query.pageSize ? query.pageSize : 10,
+    pageNumber: query.pageNumber ? Number(query.pageNumber) : 1,
+    pageSize: query.pageSize ? Number(query.pageSize) : 10,
   };
 };
 

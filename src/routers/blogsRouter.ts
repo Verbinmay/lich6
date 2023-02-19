@@ -167,7 +167,7 @@ blogsRouter.post(
 
 //GET-POST-BLOGID
 blogsRouter.get("/:blogId/posts", async (req: Request, res: Response) => {
-  const paginatorInformation:PaginatorStart = await paginator(req.query);
+  const paginatorInformation:PaginatorStart = paginator(req.query);
 
   const blogGetById: BlogDBModel | null = await blogsRepository.findBlogById(
     req.params.blogId
