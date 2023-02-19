@@ -21,7 +21,35 @@ export const usersRepository = {
 
   //GET
   async findUsers(paginatorStartInfo: PaginatorStart) {
-    const filter: any = {};
+    const filter: any = paginatorStartInfo.searchLoginTerm
+      ? paginatorStartInfo.searchEmailTerm
+        ? {
+            $or: [
+              {
+                login: {
+                  $regex: "(?i)" + paginatorStartInfo.searchLoginTerm + "(?-i)",
+                },
+              },
+              {
+                email: {
+                  $regex: "(?i)" + paginatorStartInfo.searchEmailTerm + "(?-i)",
+                },
+              },
+            ],
+          }
+        : {
+            login: {
+              $regex: "(?i)" + paginatorStartInfo.searchLoginTerm + "(?-i)",
+            },
+          }
+      : paginatorStartInfo.searchEmailTerm
+      ? {
+          email: {
+            $regex: "(?i)" + paginatorStartInfo.searchEmailTerm + "(?-i)",
+          },
+        }
+      : {};
+
     const filterSort: any = createFilterSort(
       paginatorStartInfo.sortBy,
       paginatorStartInfo.sortDirection

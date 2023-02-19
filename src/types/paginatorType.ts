@@ -4,32 +4,34 @@ import { PostViewModel } from "./postsType";
 import { UserViewModel } from "./userType";
 
 export type PaginatorStart = {
-  searchNameTerm:string
-  sortBy:string
-  sortDirection:string
-  pageNumber:number
-  pageSize:number
-}
+  searchNameTerm: string;
+  sortBy: string;
+  sortDirection: string;
+  pageNumber: number;
+  pageSize: number;
+  searchLoginTerm: string | null;
+  searchEmailTerm: string | null;
+};
 
 export type PaginatorEnd = {
-    pagesCount: number;
-    page: number;
-    pageSize: number;
-    totalCount: number;
-  };
-  
-  export type PaginatorBlog = PaginatorEnd & {
-    items: Array<BlogViewModel>;
-  };
-  
-  export type PaginatorPost = PaginatorEnd & {
-    items: Array<PostViewModel>;
-  };
-  
-  export type PaginatorUser = PaginatorEnd & {
-    items: Array<UserViewModel>;
-  };
+  pagesCount: number;
+  page: number;
+  pageSize: number;
+  totalCount: number;
+};
 
-  export type PaginatorCommentViewModel = PaginatorEnd & {
-    items: Array<CommentViewModel>;
-  };
+export type PaginatorBlog = PaginatorEnd & {
+  items: Array<BlogViewModel>;
+};
+
+export type PaginatorPost = PaginatorEnd & {
+  items: Array<PostViewModel>;
+};
+
+export type PaginatorUser = PaginatorEnd & {
+  items: Array<UserViewModel>;
+};
+
+export type PaginatorCommentViewModel = PaginatorEnd & {
+  items: Array<CommentViewModel>;
+};

@@ -1,12 +1,14 @@
 import { PaginatorEnd, PaginatorStart } from "./types/paginatorType";
 
-export const paginator = (query: any): PaginatorStart=> {
+export const paginator = (query: any): PaginatorStart => {
   return {
     searchNameTerm: query.searchNameTerm ? query.searchNameTerm : "", //default null
     sortBy: query.sortBy ? query.sortBy : "createdAt",
     sortDirection: query.sortDirection ? query.sortDirection : "desc",
     pageNumber: query.pageNumber ? Number(query.pageNumber) : 1,
     pageSize: query.pageSize ? Number(query.pageSize) : 10,
+    searchLoginTerm: query.searchLoginTerm ? query.searchLoginTerm : null,
+    searchEmailTerm: query.searchEmailTerm ? query.searchEmailTerm : null,
   };
 };
 
