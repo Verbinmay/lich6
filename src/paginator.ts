@@ -2,7 +2,7 @@ import { PaginatorEnd, PaginatorStart } from "./types/paginatorType";
 
 export const paginator = (query: any): PaginatorStart=> {
   return {
-    searchNameTerm: query.searchNameTerm ? query.searchNameTerm : null, //default null
+    searchNameTerm: query.searchNameTerm ? query.searchNameTerm : "", //default null
     sortBy: query.sortBy ? query.sortBy : "createdAt",
     sortDirection: query.sortDirection ? query.sortDirection : "desc",
     pageNumber: query.pageNumber ? query.pageNumber : 1,
