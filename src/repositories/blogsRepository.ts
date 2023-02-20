@@ -89,7 +89,7 @@ export const blogsRepository = {
     });
     return resultFind;
   },
-//TODO 
+
   //GET-POST-BLOGID
   async findPostsByBlogId(paginatorStartInfo: PaginatorStart, id: string) {
     const filter: any = { blogId: id };
