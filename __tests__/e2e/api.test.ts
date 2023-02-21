@@ -1163,90 +1163,88 @@ describe("auth", () => {
   beforeAll(async () => {
     await request(app).delete("/testing/all-data");
   });
-it("return 200 POSTAUTH", async()=> {
-  const result = await request(app)
-  .post("/users")
-  .send({
-    login: "markooo",
-    password: "123456",
-    email: "markdlnv@gmail.com",
-  })
-  .set("Authorization", "Basic YWRtaW46cXdlcnR5")
-  .expect(201);
+  it("return 200 POSTAUTH", async () => {
+    const result = await request(app)
+      .post("/users")
+      .send({
+        login: "markooo",
+        password: "123456",
+        email: "markdlnv@gmail.com",
+      })
+      .set("Authorization", "Basic YWRtaW46cXdlcnR5")
+      .expect(201);
 
-const result2 = await request(app)
-.post("/auth/login")
-.send({
-  loginOrEmail: "markdlnv@gmail.com",
-  password: "123456"
-})
-.expect(200)
+    const result2 = await request(app)
+      .post("/auth/login")
+      .send({
+        loginOrEmail: "markdlnv@gmail.com",
+        password: "123456",
+      })
+      .expect(200);
 
-expect(result2.body).toEqual({
-  accessToken: expect.any(String)
-})
-})
+    expect(result2.body).toEqual({
+      accessToken: expect.any(String),
+    });
+  });
 
-it("return 400 POSTAUTH login", async()=> {
-const result2 = await request(app)
-.post("/auth/login")
-.send({
-  loginOrEmail: 345544,
-  password: "123456"
-})
-.expect(400)
-})
+  it("return 400 POSTAUTH login", async () => {
+    const result2 = await request(app)
+      .post("/auth/login")
+      .send({
+        loginOrEmail: 345544,
+        password: "123456",
+      })
+      .expect(400);
+  });
 
-it("return 400 POSTAUTH password", async()=> {
-const result2 = await request(app)
-.post("/auth/login")
-.send({
-  loginOrEmail: "markdlnv@gmail.com",
-  password: 123456
-})
-.expect(400)
-})
+  it("return 400 POSTAUTH password", async () => {
+    const result2 = await request(app)
+      .post("/auth/login")
+      .send({
+        loginOrEmail: "markdlnv@gmail.com",
+        password: 123456,
+      })
+      .expect(400);
+  });
 
-it("return 401 POSTAUTH ", async()=> {
-const result2 = await request(app)
-.post("/auth/login")
-.send({
-  loginOrEmail: "markdlnv@gmail.com",
-  password: "123456-10000-1000"
-})
-.expect(401)
-})
+  it("return 401 POSTAUTH ", async () => {
+    const result2 = await request(app)
+      .post("/auth/login")
+      .send({
+        loginOrEmail: "markdlnv@gmail.com",
+        password: "123456-10000-1000",
+      })
+      .expect(401);
+  });
 
-it("return 200 GETAUTH", async()=>{
-  const result = await request(app)
-  .post("/users")
-  .send({
-    login: "markiz",
-    password: "123456u",
-    email: "markdlnv@yahoo.com",
-  })
-  .set("Authorization", "Basic YWRtaW46cXdlcnR5")
-  .expect(201);
+  it("return 200 GETAUTH", async () => {
+    const result = await request(app)
+      .post("/users")
+      .send({
+        login: "markiz",
+        password: "123456u",
+        email: "markdlnv@yahoo.com",
+      })
+      .set("Authorization", "Basic YWRtaW46cXdlcnR5")
+      .expect(201);
 
-const result2 = await request(app)
-.post("/auth/login")
-.send({
-  loginOrEmail: "markdlnv@yahoo.com",
-  password: "123456u"
-})
-.expect(200)
- 
-  const result3 = await request(app)
-  .get("/auth/me")
-  .set("Authorization", "Bearer " +result2.body.accessToken)
-.expect(200)
+    const result2 = await request(app)
+      .post("/auth/login")
+      .send({
+        loginOrEmail: "markdlnv@yahoo.com",
+        password: "123456u",
+      })
+      .expect(200);
 
-expect(result3.body).toEqual({
-  email: "markdlnv@yahoo.com",
-  login: "markiz",
-  userId: result.body.id
-})
-})
+    const result3 = await request(app)
+      .get("/auth/me")
+      .set("Authorization", "Bearer " + result2.body.accessToken)
+      .expect(200);
 
-
-})
+    expect(result3.body).toEqual({
+      email: "markdlnv@yahoo.com",
+      login: "markiz",
+      userId: result.body.id,
+    });
+  });
+});
