@@ -7,7 +7,7 @@ import { authRouter } from './routers/authRouter';
 import { usersRouter } from './routers/usersRouter';
 import { commentsRouter } from './routers/commentsRouter';
 import { testingRouter } from './routers/testingRouter';
-const app = express()
+export const app = express()
 const port = process.env.PORT || 3001
 ;
 
