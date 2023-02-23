@@ -1,3 +1,4 @@
+import { blogsRepository } from "../repositories/blogsRepository";
 import { postsRepository } from "../repositories/postsRepository";
 import { BlogDBModel, CommentDBModel, UserDBModel } from "../types/dbType";
 
@@ -29,12 +30,14 @@ export const postsService = {
     content: string,
     blogId: string
   ) {
+    const blogName =( await blogsRepository.findBlogById(blogId))!.name
     const result: boolean = await postsRepository.updatePost(
       id,
       title,
       shortDescription,
       content,
-      blogId
+      blogId,
+      blogName
     );
     return result;
   },

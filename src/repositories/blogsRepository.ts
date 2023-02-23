@@ -20,11 +20,12 @@ export const blogsRepository = {
       paginatorStartInfo.sortDirection
     );
 
-    const pagesCounter: { pagesCount: number; totalCount: number } = await countTotalAndPages(
-      blogsCollections,
-      filterName,
-      paginatorStartInfo.pageSize
-    );
+    const pagesCounter: { pagesCount: number; totalCount: number } =
+      await countTotalAndPages(
+        blogsCollections,
+        filterName,
+        paginatorStartInfo.pageSize
+      );
 
     let result: Array<BlogDBModel> = await blogsCollections
       .find(filterName)
@@ -53,7 +54,7 @@ export const blogsRepository = {
     const addId = await blogsCollections.findOneAndUpdate(
       { _id: result.insertedId },
       { $set: { id: result.insertedId.toString() } },
-      {returnDocument: "after"}
+      { returnDocument: "after" }
     );
     return addId.value;
   },
@@ -67,6 +68,10 @@ export const blogsRepository = {
     const result = await blogsCollections.updateOne(
       { id: id },
       { $set: { name: name, description: description, websiteUrl: websiteUrl } }
+    );
+    const nameChanged = await postsCollections.updateMany(
+      { blogId: id },
+      { $set: { blogName: name } }
     );
     return result.matchedCount === 1;
   },

@@ -60,7 +60,8 @@ export const postsRepository = {
     title: string,
     shortDescription: string,
     content: string,
-    blogId: string
+    blogId: string,
+    blogName:string
   ) {
     const result = await postsCollections.updateOne(
       { id: id },
@@ -70,6 +71,7 @@ export const postsRepository = {
           shortDescription: shortDescription,
           content: content,
           blogId: blogId,
+          blogName:blogName
         },
       }
     );
