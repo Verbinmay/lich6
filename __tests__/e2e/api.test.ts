@@ -1579,7 +1579,7 @@ describe("comments", () => {
     beforeEach(async () => {
       await request(app).delete("/testing/all-data");
     });
-  it("return 204 UPDATECOMMENTSBYPOSTID", async () => {
+  it("return 204 UPDATECOMMENT", async () => {
     await request(app).delete("/testing/all-data");
 
     const result = await request(app)
@@ -1651,7 +1651,7 @@ describe("comments", () => {
       createdAt: expect.any(String),
     });
   });
-  it("return 400 UPDATECOMMENTSBYPOSTID", async () => {
+  it("return 400 UPDATECOMMENT", async () => {
     const result = await request(app)
       .post("/blogs")
       .send({
@@ -1716,7 +1716,7 @@ describe("comments", () => {
       .set("Authorization", "Bearer " + result4.body.accessToken)
       .expect(400);
   });
-  it("return 401 UPDATECOMMENTSBYPOSTID ", async () => {
+  it("return 401 UPDATECOMMENT ", async () => {
     const result = await request(app)
       .post("/blogs")
       .send({
@@ -1771,7 +1771,7 @@ describe("comments", () => {
       })
       .expect(401);
   });
-  it("return 403 UPDATECOMMENTSBYPOSTID ", async () => {
+  it("return 403 UPDATECOMMENT ", async () => {
     const result = await request(app)
       .post("/blogs")
       .send({
@@ -1846,7 +1846,7 @@ describe("comments", () => {
       .expect(403);
   });
 
-  it("return 404 UPDATECOMMENTSBYPOSTID ", async () => {
+  it("return 404 UPDATECOMMENT ", async () => {
     await request(app).delete("/testing/all-data");
 
     const result = await request(app)
@@ -1896,7 +1896,7 @@ describe("comments", () => {
       .set("Authorization", "Bearer " + result4.body.accessToken)
       .expect(404);
   });
-  it("return 204 DELETECOMMENTSBYPOSTID ", async () => {
+  it("return 204 DELETECOMMENTS", async () => {
     await request(app).delete("/testing/all-data");
 
     const result = await request(app)
@@ -1955,7 +1955,7 @@ describe("comments", () => {
       .get("/comments/" + result5.body.id)
       .expect(404);
   });
-  it("return 401 DELETECOMMENTSBYPOSTID ", async () => {
+  it("return 401 DELETECOMMENTS ", async () => {
     const result = await request(app)
       .post("/blogs")
       .send({
@@ -2008,7 +2008,7 @@ describe("comments", () => {
       .expect(401);
   });
 
-  it("return 403 DELETECOMMENTSBYPOSTID ", async () => {
+  it("return 403 DELETECOMMENTS ", async () => {
     const result = await request(app)
       .post("/blogs")
       .send({
@@ -2080,7 +2080,7 @@ describe("comments", () => {
       .expect(403);
   });
 
-  it("return 404 UPDATECOMMENTSBYPOSTID ", async () => {
+  it("return 404 DELETECOMMENTS ", async () => {
     await request(app).delete("/testing/all-data");
 
     const result = await request(app)
@@ -2127,4 +2127,118 @@ describe("comments", () => {
       .set("Authorization", "Bearer " + result4.body.accessToken)
       .expect(404);
   });
+
+  it("return 204 GETCOMMENTS ", async () => {
+    await request(app).delete("/testing/all-data");
+
+    const result = await request(app)
+      .post("/blogs")
+      .send({
+        name: "Kate",
+        description: "HEY boys",
+        websiteUrl: "https://github.com/",
+      })
+      .set("Authorization", "Basic YWRtaW46cXdlcnR5")
+      .expect(201);
+
+    const result2 = await request(app)
+      .post("/posts")
+      .send({
+        title: "HOOKOV POLON ROT",
+        shortDescription: "string",
+        content: "VIDEO VAPE",
+        blogId: result.body.id,
+      })
+      .set("Authorization", "Basic YWRtaW46cXdlcnR5")
+      .expect(201);
+
+    const result3 = await request(app)
+      .post("/users")
+      .send({
+        login: "gogak",
+        password: "123456goga",
+        email: "gogauher@yahoo.com",
+      })
+      .set("Authorization", "Basic YWRtaW46cXdlcnR5")
+      .expect(201);
+
+    const result4 = await request(app)
+      .post("/auth/login")
+      .send({
+        loginOrEmail: "gogauher@yahoo.com",
+        password: "123456goga",
+      })
+      .expect(200);
+
+    const result5 = await request(app)
+      .post("/posts/" + result2.body.id + "/comments")
+      .send({
+        content: "Nu takoe ya smotret ne budu",
+      })
+      .set("Authorization", "Bearer " + result4.body.accessToken)
+      .expect(201);
+
+    const result7 = await request(app)
+      .get("/comments/" + result5.body.id)
+      .expect(200);
+
+      expect(result7.body).toEqual({
+        id: expect.any(String),
+        content: "Nu takoe ya smotret ne budu",
+        commentatorInfo: {
+          userId: result5.body.commentatorInfo.userId,
+          userLogin: result5.body.commentatorInfo.userLogin,
+        },
+        createdAt: expect.any(String),
+      })
+  });
+
+  it("return 404 GETCOMMENTS ", async () => {
+    await request(app).delete("/testing/all-data");
+
+    const result = await request(app)
+      .post("/blogs")
+      .send({
+        name: "Kate",
+        description: "HEY boys",
+        websiteUrl: "https://github.com/",
+      })
+      .set("Authorization", "Basic YWRtaW46cXdlcnR5")
+      .expect(201);
+
+    const result2 = await request(app)
+      .post("/posts")
+      .send({
+        title: "HOOKOV POLON ROT",
+        shortDescription: "string",
+        content: "VIDEO VAPE",
+        blogId: result.body.id,
+      })
+      .set("Authorization", "Basic YWRtaW46cXdlcnR5")
+      .expect(201);
+
+    const result3 = await request(app)
+      .post("/users")
+      .send({
+        login: "gogak",
+        password: "123456goga",
+        email: "gogauher@yahoo.com",
+      })
+      .set("Authorization", "Basic YWRtaW46cXdlcnR5")
+      .expect(201);
+
+    const result4 = await request(app)
+      .post("/auth/login")
+      .send({
+        loginOrEmail: "gogauher@yahoo.com",
+        password: "123456goga",
+      })
+      .expect(200);
+
+    const result6 = await request(app)
+      .get("/comments/-1000")
+      .set("Authorization", "Bearer " + result4.body.accessToken)
+      .expect(404);
+  });
+
 });
